@@ -4,6 +4,10 @@ Mode: **quick**. Audited commit: 4dae6e3. Date: 2026-09-11.
 
 This is a live example of the `/audit` command run on the repo that ships it. It is deliberately left in the repo so anyone considering the audit can see what the output looks like on a small, young codebase. Inputs available: the repository with full history, all instruction files and config, CI config, and the one session transcript in which the repo was built. Not available: an issue tracker, owner-filled intake (a partial one was reconstructed from the session, see `OWNER-INTAKE.md`).
 
+## Status (updated 2026-09-12)
+
+All five recommendations and the stop-doing list were actioned the day after the audit. R1: the repo now installs its own payload (`scripts/sync-root.sh`, checked by `verify.sh`). R2: `bash-guard.js` with over 50 test cases, sharing SQL rules with the SQL guard. R3: `VERSION`, an install stamp, and a session-start hook. R4: an eval log and lessons log ship in the payload, `/review` appends to the eval log, and the golden task suite was adopted at `golden-tasks.md`. R5: `lessons.md` and `docs/decisions.md` exist and carry this session's lost knowledge. Drafts that were adopted have been removed from `drafts/`. The next re-audit diffs against `audit-scorecard.yaml` from this run.
+
 ## Executive summary
 
 **Maturity: 5.1 / 10** against a target of 7 on the capabilities that compound. The process is young, not absent. Enforcement is unusually good for a two-day-old repo: a verification script runs in CI, it exercises the installer end to end, and it caught a real data-loss bug before it shipped. Everything the script can see is well controlled. Everything it cannot see is not controlled at all.

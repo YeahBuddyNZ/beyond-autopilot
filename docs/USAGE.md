@@ -27,7 +27,15 @@ Every database is treated as live. The rules and the SQL guard together mean:
 - DROP, TRUNCATE, ALTER, GRANT, REVOKE, RLS and role changes, and writes to auth, storage or system schemas are blocked. Schema changes go through your migration tool and you review them.
 - Test data it creates is prefixed `zz_test_` and deleted by id when done.
 
-The guard strips comments and string literals before checking, so a keyword hidden inside a string cannot slip past. It fails closed: anything it cannot parse is blocked.
+The guard strips comments and string literals before checking, so a keyword hidden inside a string cannot slip past. It fails closed: anything it cannot parse is blocked. The same rules apply to SQL typed on a shell command line.
+
+## The shell
+
+A second guard reads every shell command before it runs. Recursive force deletes, force pushes, hard resets, `git clean`, privilege escalation, world-writable permissions, database resets, and reading or uploading secret files are blocked however the flags are spelled, and however the command is wrapped (`xargs`, `timeout`, `npx`, `$(...)`). The full list is in `SECURITY.md`. Writing files with heredocs is fine; the guard treats heredoc bodies as data unless they are piped into a shell or a SQL client.
+
+## Session start
+
+Every session begins with a one-line report from the session check: which payload version this repo runs, and a warning if the Project section is unfilled or a guard is missing. If you see a warning, fix it before giving the AI a task; an unfilled Project section is the most common reason for a session that guesses.
 
 ## Deploys and infrastructure
 

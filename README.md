@@ -22,7 +22,7 @@ Claude Code out of the box asks permission for everything, so people either clic
 | **One tap** | Asks once, with a recommendation | Deploys, migrations, push and merge, env vars, cloud resource create or delete, npx, curl, rm, ssh, docker |
 | **Blocked** | Cannot happen, even if asked | Reading .env or keys, force push, hard reset, git clean, db reset, sudo, editing .github or .claude |
 
-Underneath that sits a **SQL guard**: a hook that inspects every query sent to a database tool (Supabase, Cloudflare D1, Render Postgres) and fails closed on anything destructive.
+Underneath that sit two **guards**, both fail-closed hooks with their own test suites. The SQL guard inspects every query sent to a database tool (Supabase, Cloudflare D1, Render Postgres). The shell guard inspects every shell command, however the flags are spelled, and applies the SQL rules to SQL on a command line too. The exact list of what each blocks is in `SECURITY.md`; the tests are the authoritative version.
 
 On top of that sit four commands that give every project the same working discipline:
 
@@ -42,37 +42,36 @@ config/                          the installable payload (copied to the root of 
   CLAUDE.md                      working rules for every project, plus a Project section to fill in
   .claude/settings.json          allow / ask / deny permissions and the hook wiring
   .claude/hooks/sql-guard.js     PreToolUse hook that blocks dangerous SQL
+  .claude/hooks/bash-guard.js    PreToolUse hook that blocks destructive shell commands
+  .claude/hooks/session-check.js SessionStart hook: reports the version, warns if the config is not active
   .claude/commands/plan.md       /plan    durable implementation plan with acceptance criteria
   .claude/commands/review.md     /review  independent review pass before a task is called done
   .claude/commands/lesson.md     /lesson  turn a correction into a test, rule or hook
   .claude/commands/audit.md      /audit   the AI process audit
+  docs/plans/, docs/ai-process-audit/   plan folder, eval log and lessons log (created once, never overwritten)
+.claude/, CLAUDE.md              this repo's own installed copy of the payload (it runs what it ships)
 install.sh                       one-line installer (curl | bash), safe to re-run
+VERSION                          date-based version, stamped into .claude/autopilot.json on install
 scripts/verify.sh                the checks CI runs on every pull request
-tests/                           SQL guard test suite
+scripts/sync-root.sh             refresh this repo's installed copy from config/
+tests/                           guard test suites
 docs/
   INSTALL.md                     every install path: cloud session, local repo, whole machine
   USAGE.md                       what to expect day to day, and the four commands
   AUDIT.md                       running the AI process audit and acting on it
   OWNER-INTAKE.md                questionnaire to fill in before an audit
   TROUBLESHOOTING.md             when something still prompts, blocks, or fails
+  decisions.md                   why things are the way they are
 CONTRIBUTING.md                  how to add to this repo
 SECURITY.md                      how to report a way past the controls
 CHANGELOG.md                     what changed and which project or audit it came from
 ```
 
+`config/` is the source of the payload. The root `.claude/` and `CLAUDE.md` are this repo's own installed copy, kept in step by `scripts/sync-root.sh` and checked by CI, so every rule and guard is felt here before it ships anywhere else.
+
 ## Install in 60 seconds
 
-**From a Claude Code cloud session**, paste this as your first message on the target repo:
-
-```
-Install Beyond Autopilot into this repo:
-
-1. Run:
-   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
-2. Fill in the "## Project" section at the bottom of CLAUDE.md with what you can see: name, stack, how to run and test, migration tool.
-3. Commit as "Add Beyond Autopilot config" and push to the current branch.
-4. Tell me when it's pushed and which branch.
-```
+**From a Claude Code cloud session**, paste the install message from [docs/INSTALL.md](docs/INSTALL.md) as your first message on the target repo. It runs the one-liner below and fills in the Project section.
 
 **From your own machine**, inside the repo:
 
@@ -82,13 +81,13 @@ curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/ins
 
 Then merge to your default branch and start a fresh session. Cloud sessions load the config when they clone; local sessions load it on next launch.
 
-The installer keeps any existing `CLAUDE.md` content (it lands under the Project section for you to tidy), backs up a `settings.json` it replaces, and verifies the SQL guard is working before it reports success. Full detail, plus a no-script fallback, in [docs/INSTALL.md](docs/INSTALL.md).
+The installer keeps any existing `CLAUDE.md` content (it lands under the Project section for you to tidy), keeps your Project section and logs on re-runs, backs up a `settings.json` it replaces, and verifies both guards are working before it reports success. Full detail, plus a no-script fallback, in [docs/INSTALL.md](docs/INSTALL.md).
 
 ## Check it's working
 
-In a fresh session on the repo:
+Start a fresh session on the repo. The first thing you see is the session check: the payload version, and a warning if the Project section is unfilled or a guard is missing. Then:
 
-1. Ask it to run `delete from public.some_table` with no WHERE against your database tool. It should come back **blocked by the guard**, not ask you to allow it.
+1. Ask it to run `rm -rf build`. It should come back **blocked by the guard**, not ask you to allow it. Same for `delete from public.some_table` with no WHERE against your database tool.
 2. Type `/` and you should see `plan`, `review`, `lesson` and `audit` in the command list.
 3. Ask it to make a small edit and commit. It should do both without asking.
 
@@ -110,7 +109,17 @@ Permissions are pre-wired for the claude.ai connectors and local MCP servers for
 
 ## Quality
 
-Every pull request to this repo runs `scripts/verify.sh`: the settings file must parse, the SQL guard must pass its test suite (allowed queries allowed, dangerous ones blocked, hidden keywords in strings and comments caught, unparseable input blocked), and the installer must run end to end against the pull request's own payload, twice, to prove it is idempotent. The same script runs locally before you push.
+Every pull request to this repo runs `scripts/verify.sh`: the settings file must parse, both guards must pass their test suites, the root copy must match `config/`, and the installer must run end to end against the pull request's own payload, twice, to prove a re-run keeps your Project section and your logs. The same script runs locally before you push. The repo also runs the audit on itself; see `docs/ai-process-audit/`.
+
+## The guards
+
+Both run as hooks before the tool executes, both fail closed, both have a test suite in `tests/`. What they block is listed once, in [SECURITY.md](SECURITY.md). To try one by hand:
+
+```
+echo '{"tool_input":{"command":"rm -rf build"}}' | node config/.claude/hooks/bash-guard.js
+```
+
+Exit code 2 with a BLOCKED message means it is working.
 
 ## Requirements
 

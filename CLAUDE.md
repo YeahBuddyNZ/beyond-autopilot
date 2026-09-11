@@ -1,11 +1,45 @@
-# Working rules for this repo
+# Beyond Autopilot: Claude Code working rules
 
-This repo is the source of Beyond Autopilot for Claude Code: the config payload and the AI process audit that get installed into other projects. It is not itself a project that uses them.
+These rules apply to every project. Project-specific detail (stack, database, commands) goes in a `## Project` section at the bottom.
 
-- The installable payload lives under `config/`. Do not move it to the root; the payload's deny rules would then stop this repo from editing itself.
-- After any change under `config/` or to `install.sh`, run the checks in `CONTRIBUTING.md`.
-- Any change to `config/` or `install.sh` gets a line in `CHANGELOG.md` with where it came from.
-- Do not add a `## Project` section to `config/CLAUDE.md`. That is filled in per target repo.
-- Keep the docs in `docs/` in step with the payload. If a behaviour changes, its doc changes in the same commit.
+## Autopilot
+- Do not ask for confirmation on routine steps. Read, edit, run, query, test, commit and move on.
+- Stop and ask only when: a permission prompt fires, a step touches real user data beyond what you created this session, a fix has failed twice, or you are about to spend money or change what users can see.
+- When you ask, ask one question with a recommended answer. Never a list of questions.
+- Finish the whole task, then give one short summary: what changed, what you verified, anything I need to check.
+
+## Databases (assume every database is live)
+- Prefer a dev branch or local instance for anything experimental. Only touch production when the task needs it.
+- SELECT freely. Before any DELETE or UPDATE, run a SELECT with the same WHERE and state the row count in your reply.
+- DELETE and UPDATE always target explicit ids, never a broad column match. Wrap multi-statement writes in a transaction.
+- Test data: tag it so it is obviously yours (name prefix `zz_test_`) and delete it by id when done.
+- Never run DROP, TRUNCATE, ALTER, RLS or role changes, or write to auth/storage/system schemas via a query tool. A hook blocks these. Use a migration and ask.
+- Schema changes go through the project's migration tool, reviewed by me, then applied.
+
+## Deploys and infrastructure
+- Deploying, merging, pushing, creating or deleting cloud resources, and changing environment variables need my ok. These are set to ask.
+- Never edit `.env`, secrets, `.github`, or `.claude` config. If a secret or variable is needed, tell me what and where.
+
+## Code
+- Work on a feature branch. Commit after each working change with a short message. Pushing and merging need my ok.
+- Run the test suite or a build before calling anything finished.
+- Match the existing style of the repo. Do not add dependencies without saying why.
+- Multi-session task: leave a NOTES.md at the repo root with where you got to and what is next.
+
+## Workflow
+- Anything bigger than a small change starts with `/plan`. The plan lives in `docs/plans/` and commits reference it.
+- Before calling a task done, run `/review` and fix what it finds.
+- When I correct you, or you catch a mistake of your own, run `/lesson` so it becomes a test, rule or hook rather than a memory.
+
+## Style
 - New Zealand English. No em dashes anywhere, including code comments and commit messages.
-- Short replies. Lead with what you did.
+- Short replies. Lead with what you did, not what you are about to do.
+
+## Project
+- Name: Beyond Autopilot. This is the source repo for the payload, not a consumer of it, but it runs the payload too so every rule is felt here first.
+- Run and test: `bash scripts/verify.sh` is the only entry point. It is what CI runs.
+- Source of truth: `config/` is the payload. The root `.claude/`, the rules above this section, and the docs templates are the installed copy. Edit `config/`, then run `bash scripts/sync-root.sh`; `verify.sh` fails if the two drift.
+- Every change to `config/` or `install.sh` gets a line in `CHANGELOG.md` saying where it came from, and bumps `VERSION` (date-based).
+- Do not add a `## Project` section to `config/CLAUDE.md`. Downstream repos fill that in.
+- Known environment limit: the cloud GitHub proxy refuses repository-settings writes (rename, topics, description, branch protection). Ask the owner to do those by hand. See `docs/decisions.md`.
+- The payload denies the Edit tool on `.github/**` and `.claude/**`. That applies here too. Change CI with a shell heredoc, and change `.claude/` only through `config/` and the sync script.

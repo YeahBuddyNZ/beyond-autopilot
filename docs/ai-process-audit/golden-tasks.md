@@ -1,4 +1,4 @@
-# Golden task suite for Beyond Autopilot (draft)
+# Golden task suite for Beyond Autopilot
 
 Six repeatable tasks with objective success criteria. Run the suite before and after any change to `config/CLAUDE.md`, the commands, or the guard, and log the result in the eval log. Starting state for all: `main` at the current head, fresh session.
 

@@ -13,8 +13,11 @@ This repo is the single source for the config and the audit. Every project that 
 | Add a repeatable procedure | A new command under `config/.claude/commands/` |
 | Change how the audit works | `config/.claude/commands/audit.md` |
 | Change how install works | `install.sh` and `docs/INSTALL.md` |
+| Add a "Blocked" promise to the README | A rule in `bash-guard.js` or `sql-guard.js` with a test, then the deny list, then `SECURITY.md` |
 
 Do not add a `## Project` section to `config/CLAUDE.md`. That is filled in per target repo.
+
+After any change under `config/`, run `bash scripts/sync-root.sh` so this repo's own installed copy matches, and bump `VERSION` to today's date. `verify.sh` fails if the root copy has drifted.
 
 ## Before you push
 
@@ -24,9 +27,9 @@ Run the verify script from the repo root. It is exactly what CI runs on every pu
 bash scripts/verify.sh
 ```
 
-It checks that `settings.json` parses, runs the SQL guard test suite in `tests/`, lints `install.sh`, checks every command file has frontmatter, scans for em dashes, and runs the installer end to end against a tarball of your working tree into a scratch directory that already has a `CLAUDE.md` and a `settings.json`, then runs it a second time to prove it is idempotent.
+It checks that `settings.json` parses, runs both guard test suites in `tests/`, lints `install.sh`, checks every command file has frontmatter, scans for em dashes, checks the root copy matches `config/`, and runs the installer end to end against a tarball of your working tree into a scratch directory that already has a `CLAUDE.md`, a `settings.json` and an eval log, then runs it a second time to prove a re-run keeps what is yours.
 
-If you change the SQL guard, add a case to `tests/sql-guard.test.js` first and watch it fail, then fix the guard.
+If you change a guard, add a case to its test file first and watch it fail, then fix the guard. Note that sessions on this repo run the guards too, so a guard bug can block your own commands; the file tools (Edit, Write) are not gated by the shell guard and are the way out.
 
 ## Changelog
 
