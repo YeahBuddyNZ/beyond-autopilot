@@ -1,4 +1,4 @@
-# Claude Code working rules
+# Beyond Autopilot: Claude Code working rules
 
 These rules apply to every project. Project-specific detail (stack, database, commands) goes in a `## Project` section at the bottom.
 
@@ -25,6 +25,11 @@ These rules apply to every project. Project-specific detail (stack, database, co
 - Run the test suite or a build before calling anything finished.
 - Match the existing style of the repo. Do not add dependencies without saying why.
 - Multi-session task: leave a NOTES.md at the repo root with where you got to and what is next.
+
+## Workflow
+- Anything bigger than a small change starts with `/plan`. The plan lives in `docs/plans/` and commits reference it.
+- Before calling a task done, run `/review` and fix what it finds.
+- When I correct you, or you catch a mistake of your own, run `/lesson` so it becomes a test, rule or hook rather than a memory.
 
 ## Style
 - New Zealand English. No em dashes anywhere, including code comments and commit messages.

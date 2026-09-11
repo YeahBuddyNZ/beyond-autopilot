@@ -1,4 +1,4 @@
-# OWNER-INTAKE.md
+# Owner intake
 
 Copy this into `docs/ai-process-audit/OWNER-INTAKE.md` in the repo being audited and fill it in before running `/audit`. Short answers. "Don't know" is a valid answer and is itself useful to the audit.
 
