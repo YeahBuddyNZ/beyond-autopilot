@@ -34,6 +34,29 @@ echo '{"tool_input":{"query":"delete from public.users"}}' | node .claude/hooks/
 
 Exit code 2 with a `sql-guard BLOCKED` message means it is working. Exit 0 means the query would be allowed.
 
+## The shell guard blocked something legitimate
+
+The guard reads the command, not your intent. Common cases:
+
+| Blocked as | What to do |
+|---|---|
+| `rm with recursive and force` | Use `rm -r` without `-f`, or delete the specific files. The AI can also ask you to run it |
+| `git push with force` | Force pushes are a human decision. Run it yourself |
+| `reads or ships a secret file` | The AI does not need the contents of `.env`. Tell it the variable name instead |
+| `SQL on the command line` | Same rules as the SQL guard; see the table above |
+
+If it blocked something that is genuinely routine, that is a false positive: open an issue with the exact command, or add a case to `tests/bash-guard.test.js` and fix the guard. The shell guard treats heredoc bodies as data unless they are piped into a shell or a SQL client, so writing files with heredocs is fine.
+
+## The session check is warning at startup
+
+`session-check.js` runs when a session starts and prints the payload version plus any of these:
+
+| Warning | Fix |
+|---|---|
+| no `.claude/autopilot.json` stamp | Re-run the installer; the stamp is how the next audit knows which version you had |
+| a guard is missing | Re-run the installer |
+| Project section still the template | Fill in the `## Project` section at the bottom of `CLAUDE.md` |
+
 ## The guard is not firing at all
 
 - Node must be on PATH for the session. Claude Code already requires it, but check with `node --version`.

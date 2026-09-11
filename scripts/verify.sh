@@ -5,6 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 fail=0
+TMP_ROOTCHECK="$(mktemp)"
+trap 'rm -f "$TMP_ROOTCHECK"' EXIT
 step() { printf '\n== %s\n' "$*"; }
 ok()   { printf '   ok\n'; }
 bad()  { printf '   FAIL: %s\n' "$*"; fail=1; }
@@ -31,17 +33,36 @@ else
   ok
 fi
 
+step "the repo runs the payload it ships (root .claude and CLAUDE.md rules match config/)"
+[ -d .claude ] || bad "no .claude/ at the repo root (run bash scripts/sync-root.sh)"
+(cd config/.claude && find . -type f) | while read -r f; do
+  cmp -s "config/.claude/$f" ".claude/$f" || echo "   FAIL: root .claude/${f#./} differs from config/ (run bash scripts/sync-root.sh)"
+done | tee "$TMP_ROOTCHECK"
+[ -s "$TMP_ROOTCHECK" ] && fail=1
+if ! diff <(sed '/^## Project/,$d' config/CLAUDE.md) <(sed '/^## Project/,$d' CLAUDE.md) >/dev/null; then
+  bad "root CLAUDE.md rules differ from config/CLAUDE.md above '## Project' (run bash scripts/sync-root.sh)"
+fi
+grep -q '^## Project' CLAUDE.md && ! grep -q 'Fill in per repo' CLAUDE.md || bad "root CLAUDE.md Project section is missing or still the template"
+[ -f .claude/autopilot.json ] || bad "root .claude/autopilot.json is missing (run bash scripts/sync-root.sh)"
+[ "$fail" = "0" ] && ok
+
 step "installer end to end against this tree"
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+trap 'rm -rf "$TMP" "$TMP_ROOTCHECK"' EXIT
 git ls-files -z --cached --others --exclude-standard | tar --null -T - --transform 's,^,beyond-autopilot-main/,' -czf "$TMP/src.tar.gz"
 mkdir -p "$TMP/target/.claude"
 printf '# Existing project\n\nRun with npm start.\n' > "$TMP/target/CLAUDE.md"
 printf '{"permissions":{}}\n' > "$TMP/target/.claude/settings.json"
 if AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" bash install.sh "$TMP/target" >"$TMP/install.log" 2>&1; then
-  for f in .claude/settings.json .claude/hooks/sql-guard.js .claude/commands/audit.md .claude/commands/plan.md .claude/commands/review.md .claude/commands/lesson.md CLAUDE.md .claude/settings.json.bak; do
+  for f in .claude/settings.json .claude/hooks/sql-guard.js .claude/hooks/bash-guard.js .claude/hooks/session-check.js \
+           .claude/commands/audit.md .claude/commands/plan.md .claude/commands/review.md .claude/commands/lesson.md \
+           .claude/autopilot.json docs/ai-process-audit/eval-log.md docs/ai-process-audit/lessons.md docs/plans/README.md \
+           CLAUDE.md .claude/settings.json.bak; do
     [ -f "$TMP/target/$f" ] || bad "installer did not produce $f"
   done
+  grep -q "\"version\": \"$(cat VERSION)\"" "$TMP/target/.claude/autopilot.json" || bad "stamp does not carry the VERSION file's value"
+  printf '| 2026-01-01 | keep me | | | | | | | | |\n' >> "$TMP/target/docs/ai-process-audit/eval-log.md"
+  CLAUDE_PROJECT_DIR="$TMP/target" node "$TMP/target/.claude/hooks/session-check.js" | grep -q 'still the template' || bad "session check did not warn about an unfilled Project section"
   grep -q 'Run with npm start' "$TMP/target/CLAUDE.md" || bad "existing CLAUDE.md content was not merged"
   grep -q '^# Beyond Autopilot' "$TMP/target/CLAUDE.md" || bad "installed CLAUDE.md is not the payload"
   # a second run must refresh the rules but keep everything the user put in the Project section
@@ -51,6 +72,7 @@ if AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" bash install.sh "$TMP/target" >"$TMP/inst
   grep -q 'Name: Verify Fixture' "$TMP/target/CLAUDE.md" || bad "re-run lost the filled-in Project section"
   grep -q 'Run with npm start' "$TMP/target/CLAUDE.md" || bad "re-run lost the merged notes"
   [ "$(grep -c '^## Project' "$TMP/target/CLAUDE.md")" = "1" ] || bad "re-run duplicated the Project heading"
+  grep -q 'keep me' "$TMP/target/docs/ai-process-audit/eval-log.md" || bad "re-run overwrote the eval log"
   ok
 else
   cat "$TMP/install.log"; bad "install.sh failed"

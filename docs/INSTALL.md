@@ -78,10 +78,12 @@ Cloud sessions do not read `~/.claude`, so repos you use in the cloud still need
 2. Downloads the archive of this repo and extracts only the `config/` payload into a temp directory. The extraction uses a wildcard, so it keeps working if this repo is ever renamed.
 3. If the target already has `.claude/settings.json` and it differs, keeps a copy as `.claude/settings.json.bak`.
 4. Handles an existing `CLAUDE.md` without losing anything. If it is not ours, its content is appended under the Project section of the new one, clearly marked. If it is ours from an earlier install, the rules above `## Project` are refreshed from the payload and everything from `## Project` to the end is kept exactly as you had it.
-5. Copies the payload in. Other files under `.claude/` are left alone.
-6. Verifies the installed `settings.json` parses and that the SQL guard blocks a bare DELETE. Fails loudly if either check fails.
+5. Copies `.claude/` and `CLAUDE.md` in. Other files under `.claude/` are left alone.
+6. Creates the docs templates (`docs/plans/README.md`, `docs/ai-process-audit/eval-log.md`, `docs/ai-process-audit/lessons.md`) only if they do not exist. Once they exist they are yours; the installer never touches them again.
+7. Writes `.claude/autopilot.json` with the payload version, source and time. The session-start check reads it.
+8. Verifies the installed `settings.json` parses and that both guards block what they should. Fails loudly if any check fails, and prints what it installed.
 
-It is safe to re-run. Re-running overwrites the payload files (`CLAUDE.md`, `.claude/settings.json`, the hook, and the four commands) and repeats steps 3 to 6. It recognises its own `CLAUDE.md` by its title, so a re-run does not merge twice.
+It is safe to re-run. Re-running refreshes `.claude/` and the rules part of `CLAUDE.md`, keeps your Project section and your logs, and repeats steps 3 to 8.
 
 Three environment variables change where it pulls from:
 

@@ -46,6 +46,8 @@ fi
 mkdir -p "$TMP/payload"
 tar -xzf "$TMP/src.tar.gz" -C "$TMP/payload" --strip-components=2 --wildcards '*/config/*' \
   || die "archive did not contain a config/ directory"
+VERSION="$(tar -xzOf "$TMP/src.tar.gz" --wildcards '*/VERSION' 2>/dev/null | head -1 || true)"
+[ -n "$VERSION" ] || VERSION="unknown"
 
 [ -f "$TMP/payload/.claude/settings.json" ] || die "payload is missing .claude/settings.json"
 [ -f "$TMP/payload/CLAUDE.md" ] || die "payload is missing CLAUDE.md"
@@ -85,16 +87,36 @@ mkdir -p "$TARGET/.claude/hooks" "$TARGET/.claude/commands"
 cp -R "$TMP/payload/.claude/." "$TARGET/.claude/"
 cp "$TMP/payload/CLAUDE.md" "$TARGET/CLAUDE.md"
 
+# Everything else in the payload (docs templates: plans, eval log, lessons) is created only
+# if absent. These are yours once they exist; the installer never overwrites them.
+(cd "$TMP/payload" && find . -type f ! -path './.claude/*' ! -name CLAUDE.md) | while read -r rel; do
+  rel="${rel#./}"
+  if [ ! -e "$TARGET/$rel" ]; then
+    mkdir -p "$TARGET/$(dirname "$rel")"
+    cp "$TMP/payload/$rel" "$TARGET/$rel"
+    say "  created $rel"
+  fi
+done
+
+# Version stamp, read by the session-start check.
+printf '{\n  "version": "%s",\n  "source": "%s",\n  "installed_at": "%s"\n}\n' \
+  "$VERSION" "${AUTOPILOT_ARCHIVE:+local archive}${AUTOPILOT_ARCHIVE:-$REPO@$REF}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  > "$TARGET/.claude/autopilot.json"
+
 # Verify what we just installed.
 node -e 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"))' "$TARGET/.claude/settings.json" \
   || die "installed settings.json does not parse"
 if printf '{"tool_input":{"query":"delete from public.t"}}' | node "$TARGET/.claude/hooks/sql-guard.js" 2>/dev/null; then
   die "SQL guard did not block a bare DELETE; something is wrong with the hook"
 fi
+if printf '{"tool_input":{"command":"rm -rf /"}}' | node "$TARGET/.claude/hooks/bash-guard.js" 2>/dev/null; then
+  die "shell guard did not block rm -rf; something is wrong with the hook"
+fi
 
-say "  installed:"
+say "  installed Beyond Autopilot $VERSION:"
 say "    CLAUDE.md"
 (cd "$TMP/payload" && find .claude -type f | sort | sed 's/^/    /')
+say "    .claude/autopilot.json"
 say ""
 say "Next:"
 say "  1. Fill in the '## Project' section at the bottom of CLAUDE.md."
