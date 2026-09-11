@@ -85,7 +85,7 @@ Pick the mode from the owner's instruction, or default to **Full**.
 | Mode | When | What changes |
 | --- | --- | --- |
 | **Full** | First audit of a real project | Everything below |
-| **Quick** | Small repo, side project, or a first look. Target under an hour of agent time | Phase 0 analytics, Phase 1 diagram only, Lenses A, D and E only, 5 failure instances, scorecard compressed to a paragraph, top 5 changes, drafts 1 and 5 only |
+| **Quick** | Small repo, side project, or a first look. Target under an hour of agent time | Phase 0 analytics, Phase 1 diagram only, Lenses A, D and E only, 5 failure instances, scorecard compressed to a paragraph, top 5 changes, drafts 1 and 5 only, main body under 2,000 words |
 | **Re-audit** | A previous `audit-scorecard.yaml` exists | Run Full, then add a delta section: score movement per capability, which previous recommendations were adopted, which were not and why (ask), whether the failure histogram shifted, whether the eval log shows improvement. The delta section leads the executive summary |
 | **Portfolio** | Owner has several repos built the same way | Run Quick on each, then a cross-repo section: findings common to all repos, shared instructions and Skills that should be extracted into one reusable base, and per-repo exceptions |
 

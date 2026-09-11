@@ -1,0 +1,35 @@
+audit_date: 2026-09-11
+mode: quick
+commit: 4dae6e3
+overall: 5.1
+capabilities:
+  requirements_and_context_management: { score: 3, target: 5, confidence: high }
+  architecture_guidance:               { score: 5, target: 5, confidence: medium }
+  repository_context:                  { score: 6, target: 7, confidence: high }
+  domain_knowledge:                    { score: 5, target: 5, confidence: medium }
+  skills_and_instructions:             { score: 6, target: 7, confidence: high }
+  task_decomposition:                  { score: 2, target: 5, confidence: high }
+  planning:                            { score: 2, target: 5, confidence: high }
+  acceptance_criteria:                 { score: 2, target: 5, confidence: high }
+  implementation:                      { score: 6, target: 5, confidence: medium }
+  automated_testing:                   { score: 6, target: 7, confidence: high }
+  independent_verification:            { score: 7, target: 7, confidence: high }
+  code_review:                         { score: 2, target: 5, confidence: medium }
+  architecture_validation:             { score: 3, target: 5, confidence: high }
+  security_review:                     { score: 5, target: 7, confidence: medium }
+  documentation_maintenance:           { score: 5, target: 5, confidence: high }
+  memory_and_knowledge_retention:      { score: 3, target: 7, confidence: high }
+  error_recovery:                      { score: 6, target: 5, confidence: high }
+  feedback_loops:                      { score: 4, target: 7, confidence: high }
+  human_oversight:                     { score: 4, target: 5, confidence: low }
+  agent_autonomy_and_guardrails:       { score: 5, target: 7, confidence: high }
+  observability:                       { score: 2, target: 5, confidence: high }
+  evaluation_and_regression_testing:   { score: 2, target: 7, confidence: high }
+  continuous_improvement:              { score: 4, target: 5, confidence: medium }
+root_cause_histogram:
+  missing_validation: 2
+  missing_feedback_loop: 2
+  missing_context: 1
+  poor_instruction: 1
+  missing_tool: 1
+top_recommendations: [R1, R2, R3, R4, R5]
