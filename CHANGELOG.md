@@ -4,6 +4,9 @@ Newest first. Each entry says what changed and where it came from, so the next a
 
 ## 2026-09-11 (second release)
 
+- Ran `/audit quick` on this repo and committed the output under `docs/ai-process-audit/` as a worked example. Score 5.1. Top finding: the repo does not run the payload it ships. Recommendations R1 to R5 are the next work.
+- Audit prompt: Quick mode now has its own word budget (main body under 2,000 words). Found while running it; Full mode's 6,000 was the only budget stated.
+
 - Rebranded as Beyond Autopilot for Claude Code. Payload `CLAUDE.md` retitled so the installer can recognise its own file.
 - Added `install.sh`: one-line installer that extracts the payload, keeps an existing `CLAUDE.md` under the Project section, backs up a replaced `settings.json`, and verifies the SQL guard before reporting success. Rename-proof extraction.
 - Added three workflow commands to the payload: `/plan`, `/review` and `/lesson`, and a Workflow section in the payload `CLAUDE.md` that tells sessions when to use them. Source: the audit's own principles (durable plans, independent verification, closed feedback loops), applied to the base.

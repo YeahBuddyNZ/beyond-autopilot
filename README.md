@@ -100,6 +100,8 @@ Give it whole tasks, not steps. Anything bigger than a small change starts with 
 
 Every 60 to 90 days, fill in [docs/OWNER-INTAKE.md](docs/OWNER-INTAKE.md), drop it in the repo, and run `/audit`. You get an executive summary, a failure histogram, a maturity scorecard, the ten highest-value changes ranked, a stop-doing list, and draft artefacts ready to adopt. Read the summary and the stop-doing list first. Delete before you add.
 
+Want to see what the output looks like before you run it? The repo audited itself: [docs/ai-process-audit/AI-PROCESS-AUDIT.md](docs/ai-process-audit/AI-PROCESS-AUDIT.md) is a real quick-mode run on this codebase, findings and all.
+
 Rules the audit says every project needs go into `config/CLAUDE.md`. Checks it says should be enforced become hooks or permissions. Procedures become commands. That loop is the point of this repo. See [docs/AUDIT.md](docs/AUDIT.md).
 
 ## Supported platforms
