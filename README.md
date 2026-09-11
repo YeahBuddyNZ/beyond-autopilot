@@ -68,7 +68,7 @@ CHANGELOG.md                     what changed and which project or audit it came
 Install Beyond Autopilot into this repo:
 
 1. Run:
-   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash
+   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
 2. Fill in the "## Project" section at the bottom of CLAUDE.md with what you can see: name, stack, how to run and test, migration tool.
 3. Commit as "Add Beyond Autopilot config" and push to the current branch.
 4. Tell me when it's pushed and which branch.
@@ -77,7 +77,7 @@ Install Beyond Autopilot into this repo:
 **From your own machine**, inside the repo:
 
 ```
-curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
 ```
 
 Then merge to your default branch and start a fresh session. Cloud sessions load the config when they clone; local sessions load it on next launch.

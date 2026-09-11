@@ -6,17 +6,17 @@
 # keeps anything else you have in .claude/ and CLAUDE.md.
 #
 # Usage:
-#   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash
-#   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash -s -- /path/to/repo
+#   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
+#   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash -s -- /path/to/repo
 #
 # Environment:
-#   AUTOPILOT_REPO   GitHub owner/repo to pull from (default YeahBuddyNZ/autopilot-config-into-a-cloud)
+#   AUTOPILOT_REPO   GitHub owner/repo to pull from (default YeahBuddyNZ/beyond-autopilot)
 #   AUTOPILOT_REF    branch or tag to install (default main)
 #   AUTOPILOT_ARCHIVE  path to a local .tar.gz of this repo to install from instead of downloading
 
 set -euo pipefail
 
-REPO="${AUTOPILOT_REPO:-YeahBuddyNZ/autopilot-config-into-a-cloud}"
+REPO="${AUTOPILOT_REPO:-YeahBuddyNZ/beyond-autopilot}"
 REF="${AUTOPILOT_REF:-main}"
 TARGET="${1:-.}"
 

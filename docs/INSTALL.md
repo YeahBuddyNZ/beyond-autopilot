@@ -20,7 +20,7 @@ Start a cloud session on the target repo and paste this as your first message:
 Install Beyond Autopilot into this repo:
 
 1. Run:
-   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash
+   curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
 2. Fill in the "## Project" section at the bottom of CLAUDE.md with what you can see: name, stack, how to run and test, migration tool.
 3. Commit as "Add Beyond Autopilot config" and push to the current branch.
 4. Tell me when it's pushed and which branch.
@@ -41,13 +41,13 @@ The config only loads when a session clones it, so:
 Inside the repo:
 
 ```
-curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
 ```
 
 Or into a specific directory:
 
 ```
-curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/autopilot-config-into-a-cloud/main/install.sh | bash -s -- /path/to/repo
+curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash -s -- /path/to/repo
 ```
 
 Commit `.claude/` and `CLAUDE.md`, fill in the Project section, push. Local sessions pick it up on next launch.
@@ -57,7 +57,7 @@ Commit `.claude/` and `CLAUDE.md`, fill in the Project section, push. Local sess
 To apply the permissions and SQL guard to every repo you open locally, without committing anything:
 
 ```
-git clone https://github.com/YeahBuddyNZ/autopilot-config-into-a-cloud.git /tmp/beyond-autopilot
+git clone https://github.com/YeahBuddyNZ/beyond-autopilot.git /tmp/beyond-autopilot
 mkdir -p ~/.claude/hooks
 cp /tmp/beyond-autopilot/config/.claude/hooks/sql-guard.js ~/.claude/hooks/
 ```
@@ -86,7 +86,7 @@ It is safe to re-run. Re-running overwrites the payload files (`CLAUDE.md`, `.cl
 Three environment variables change where it pulls from:
 
 ```
-AUTOPILOT_REPO=owner/repo        # default YeahBuddyNZ/autopilot-config-into-a-cloud
+AUTOPILOT_REPO=owner/repo        # default YeahBuddyNZ/beyond-autopilot
 AUTOPILOT_REF=branch             # default main
 AUTOPILOT_ARCHIVE=/path/to.tar.gz  # install from a local archive instead of downloading
 ```
@@ -96,7 +96,7 @@ AUTOPILOT_ARCHIVE=/path/to.tar.gz  # install from a local archive instead of dow
 If `raw.githubusercontent.com` is blocked for you, the archive route works with the same result:
 
 ```
-curl -L https://github.com/YeahBuddyNZ/autopilot-config-into-a-cloud/archive/refs/heads/main.tar.gz | tar xz --strip-components=2 -C . --wildcards '*/config/*'
+curl -L https://github.com/YeahBuddyNZ/beyond-autopilot/archive/refs/heads/main.tar.gz | tar xz --strip-components=2 -C . --wildcards '*/config/*'
 ```
 
 This does not merge an existing `CLAUDE.md`, so if you have one, keep its content and paste it under the Project section yourself.
@@ -106,7 +106,7 @@ This does not merge an existing `CLAUDE.md`, so if you have one, keep its conten
 Both curl routes will 404. From a cloud session, use the GitHub connector instead:
 
 ```
-Use the GitHub connector to read every file under config/ in YeahBuddyNZ/autopilot-config-into-a-cloud on main and write them into this repo at the same paths with the config/ prefix removed:
+Use the GitHub connector to read every file under config/ in YeahBuddyNZ/beyond-autopilot on main and write them into this repo at the same paths with the config/ prefix removed:
 - config/.claude/settings.json        -> .claude/settings.json
 - config/.claude/hooks/sql-guard.js   -> .claude/hooks/sql-guard.js
 - config/.claude/commands/audit.md    -> .claude/commands/audit.md
