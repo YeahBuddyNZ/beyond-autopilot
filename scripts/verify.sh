@@ -70,7 +70,9 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP" "$TMP_ROOTCHECK"' EXIT
 git ls-files -z --cached --others --exclude-standard | while IFS= read -r -d '' f; do [ -e "$f" ] && printf '%s\0' "$f"; done | tar --null -T - --transform 's,^,beyond-autopilot-main/,' -czf "$TMP/src.tar.gz"
 mkdir -p "$TMP/target/.claude/commands"
-printf -- '---\ndescription: old\n---\nold plan command\n' > "$TMP/target/.claude/commands/plan.md"
+printf -- '---\ndescription: Write a durable implementation plan with acceptance criteria before building anything bigger than a small change.\n---\nold plan command\n' > "$TMP/target/.claude/commands/plan.md"
+printf -- '---\ndescription: This project'"'"'s own review checklist, written before Beyond Autopilot.\n---\ncustom review\n' > "$TMP/target/.claude/commands/review.md"
+printf -- '# AI Engineering Process Audit\n\n## 0. Mission\n\nthe original prompt, installed by hand\n' > "$TMP/target/.claude/commands/audit.md"
 printf '# Existing project\n\nRun with npm start.\n' > "$TMP/target/CLAUDE.md"
 printf '{"permissions":{}}\n' > "$TMP/target/.claude/settings.json"
 if AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" bash install.sh "$TMP/target" >"$TMP/install.log" 2>&1; then
@@ -85,6 +87,9 @@ if AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" bash install.sh "$TMP/target" >"$TMP/inst
   done
   grep -q "\"version\": \"$(cat VERSION)\"" "$TMP/target/.claude/autopilot.json" || bad "stamp does not carry the VERSION file's value"
   [ ! -e "$TMP/target/.claude/commands/plan.md" ] || bad "installer left a superseded .claude/commands/plan.md in place"
+  [ -e "$TMP/target/.claude/commands/review.md" ] || bad "installer deleted a project's own .claude/commands/review.md that was not ours"
+  [ ! -e "$TMP/target/.claude/commands/audit.md" ] || bad "installer left the original hand-installed audit prompt in place"
+  grep -q "kept .claude/commands/review.md" "$TMP/install.log" || bad "installer did not report the kept project command"
   grep -q '"source": "local archive"' "$TMP/target/.claude/autopilot.json" || bad "stamp source label is wrong for a local archive install: $(grep source "$TMP/target/.claude/autopilot.json")"
   printf '| 2026-01-01 | keep me | | | | | | | | |\n' >> "$TMP/target/docs/ai-process-audit/eval-log.md"
   CLAUDE_PROJECT_DIR="$TMP/target" node "$TMP/target/.claude/hooks/session-check.js" | grep -q 'still the template' || bad "session check did not warn about an unfilled Project section"

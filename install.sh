@@ -90,8 +90,31 @@ cp -R "$TMP/payload/.claude/." "$TARGET/.claude/"
 
 # Upgrade path: earlier payloads shipped these as .claude/commands/*.md. The same names now
 # live under .claude/skills/, so the old files would register each slash command twice.
+# Only a file whose description matches the one we shipped is removed; a project's own command
+# with the same name is kept and reported, because deleting someone else's work is not an upgrade.
+ours_desc() {
+  case "$1" in
+    plan)   printf '%s' 'description: Write a durable implementation plan with acceptance criteria before building' ;;
+    review) printf '%s' 'description: Independent review pass over a change before it is called done.' ;;
+    lesson) printf '%s' 'description: Turn a correction or mistake into a durable control (a test, rule, hook or doc)' ;;
+    audit)  printf '%s' 'description: Audit the AI engineering process around this repo (not the product).' ;;
+  esac
+}
+is_ours() {
+  # the command file this payload shipped, or (audit only) the original audit prompt that
+  # predates the payload and was installed by hand as .claude/commands/audit.md
+  grep -qF "$(ours_desc "$1")" "$2" && return 0
+  [ "$1" = "audit" ] && grep -q '^# AI Engineering Process Audit' "$2" && grep -q '^## 0. Mission' "$2" && return 0
+  return 1
+}
 for c in plan review lesson audit; do
-  [ -f "$TARGET/.claude/commands/$c.md" ] && rm -f "$TARGET/.claude/commands/$c.md" && say "  removed superseded .claude/commands/$c.md"
+  f="$TARGET/.claude/commands/$c.md"
+  [ -f "$f" ] || continue
+  if is_ours "$c" "$f"; then
+    rm -f "$f" && say "  removed superseded .claude/commands/$c.md (replaced by .claude/skills/$c/)"
+  else
+    say "  kept .claude/commands/$c.md: it is not the one this payload shipped. Note that /$c now resolves to two files; rename or remove one."
+  fi
 done
 rmdir "$TARGET/.claude/commands" 2>/dev/null || true
 cp "$TMP/payload/CLAUDE.md" "$TARGET/CLAUDE.md"
