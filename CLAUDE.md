@@ -57,5 +57,5 @@ These rules apply to every project. Project-specific detail (stack, database, co
 - Source of truth: `config/` is the payload. The root `.claude/`, the rules above this section, and the docs templates are the installed copy. Edit `config/`, then run `bash scripts/sync-root.sh`; `verify.sh` fails if the two drift.
 - Every change to `config/` or `install.sh` gets a line in `CHANGELOG.md` saying where it came from, and bumps `VERSION` (date-based).
 - Do not add a `## Project` section to `config/CLAUDE.md`. Downstream repos fill that in.
-- Known environment limit: the cloud GitHub proxy refuses repository-settings writes (rename, topics, description, branch protection). Ask the owner to do those by hand. See `docs/decisions.md`.
+- Known environment limit: the cloud GitHub proxy refuses repository-settings writes (rename, topics, description, branch protection) and refuses tag pushes and tag creation through the API. Ask the owner to do those by hand; release tags come from the GitHub Releases page. See `docs/decisions.md`.
 - The payload denies the Edit tool on `.github/**` and `.claude/**`. That applies here too. Change CI with a shell heredoc, and change `.claude/` only through `config/` and the sync script.

@@ -48,3 +48,5 @@ Every change under `config/` or to `install.sh` gets a line in `CHANGELOG.md` un
 ## Releasing
 
 `main` is what installs. Open a pull request, run the checks above, merge. `VERSION` holds the changelog date. Each merge to `main` that changes the payload is tagged `v<VERSION>` (for example `v2026.09.12`) so a project can pin: `AUTOPILOT_REF=v2026.09.12`. A tag is a snapshot, not a branch; `main` is what an unpinned install gets.
+
+The owner creates the tag from the GitHub Releases page (Draft a new release, tag `v<VERSION>`, target `main`, title the changelog date). Cloud sessions cannot push tags or create them through the API; the proxy refuses both. Ask, do not retry.

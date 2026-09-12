@@ -34,9 +34,9 @@ The shell guard skips the body of a heredoc unless it is fed to a shell or a SQL
 
 The root is the installed copy; `config/` is the source. Extracting with a wildcard (`*/config/*`) means the install command survives a repo rename, which happened the same day.
 
-## 2026-09-11: Repository settings are changed by hand
+## 2026-09-11: Repository settings and release tags are created by hand
 
-The cloud session's GitHub proxy allows git and pull request operations but refuses repository-settings writes: rename, description, topics, branch protection. A probe of the API returned 200 for a read, which was misleading. The owner does these in the GitHub UI; sessions should ask, not retry.
+The cloud session's GitHub proxy allows git and pull request operations but refuses repository-settings writes: rename, description, topics, branch protection. It also refuses pushing a tag (HTTP 403 on the git push) and creating a tag ref through the API. Release tags are created by the owner from the Releases page. A probe of the API returned 200 for a read, which was misleading. The owner does these in the GitHub UI; sessions should ask, not retry.
 
 ## 2026-09-11: Licence deferred
 

@@ -8,7 +8,7 @@ Source: finalising the release.
 
 - The installer's archive URL now works for a branch, a tag or a commit, so `AUTOPILOT_REF=v2026.09.12` pins a project to a release as the docs already claimed. Found while tagging the first release.
 - The install stamp's source label no longer glues "local archive" onto a temp path; `scripts/sync-root.sh` labels this repo's own stamp as coming from `config/`. Covered by `verify.sh`.
-- First release tag: `v2026.09.12`.
+- First release tag `v2026.09.12`, created by the owner from the Releases page. Sessions cannot create tags; recorded in `docs/decisions.md`.
 
 Source: the instruction files, notes and commit history of 23 Beyond repositories (two read-only surveys), and a survey of the Claude Code skills docs and four skills collections.
 
