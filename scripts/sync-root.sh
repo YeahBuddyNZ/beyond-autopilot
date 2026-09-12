@@ -7,4 +7,4 @@ cd "$(dirname "$0")/.."
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 git ls-files -z --cached --others --exclude-standard | while IFS= read -r -d '' f; do [ -e "$f" ] && printf '%s\0' "$f"; done | tar --null -T - --transform 's,^,beyond-autopilot-main/,' -czf "$TMP/src.tar.gz"
-AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" bash install.sh .
+AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" AUTOPILOT_SOURCE="config/ via scripts/sync-root.sh" bash install.sh .

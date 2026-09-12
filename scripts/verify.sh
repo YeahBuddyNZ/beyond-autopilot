@@ -85,6 +85,7 @@ if AUTOPILOT_ARCHIVE="$TMP/src.tar.gz" bash install.sh "$TMP/target" >"$TMP/inst
   done
   grep -q "\"version\": \"$(cat VERSION)\"" "$TMP/target/.claude/autopilot.json" || bad "stamp does not carry the VERSION file's value"
   [ ! -e "$TMP/target/.claude/commands/plan.md" ] || bad "installer left a superseded .claude/commands/plan.md in place"
+  grep -q '"source": "local archive"' "$TMP/target/.claude/autopilot.json" || bad "stamp source label is wrong for a local archive install: $(grep source "$TMP/target/.claude/autopilot.json")"
   printf '| 2026-01-01 | keep me | | | | | | | | |\n' >> "$TMP/target/docs/ai-process-audit/eval-log.md"
   CLAUDE_PROJECT_DIR="$TMP/target" node "$TMP/target/.claude/hooks/session-check.js" | grep -q 'still the template' || bad "session check did not warn about an unfilled Project section"
   grep -q 'Run with npm start' "$TMP/target/CLAUDE.md" || bad "existing CLAUDE.md content was not merged"
