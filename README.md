@@ -24,7 +24,7 @@ Claude Code out of the box asks permission for everything, so people either clic
 
 Underneath that sit two **guards**, both fail-closed hooks with their own test suites. The SQL guard inspects every query sent to a database tool (Supabase, Cloudflare D1, Render Postgres). The shell guard inspects every shell command, however the flags are spelled, and applies the SQL rules to SQL on a command line too. The exact list of what each blocks is in `SECURITY.md`; the tests are the authoritative version.
 
-On top of that sit four commands that give every project the same working discipline:
+On top of that sit four skills that give every project the same working discipline:
 
 | Command | What it does |
 |---|---|
@@ -35,6 +35,8 @@ On top of that sit four commands that give every project the same working discip
 
 Findings from `/audit` that apply everywhere come back here, so the base gets better with every project.
 
+Then there is the memory. The `beyond-traps` skill holds every platform trap that has cost a Beyond project a day, with the symptom and the fix, drawn from the instruction files and commit history of 23 repositories. The rules that recurred across those repos are in the base `CLAUDE.md`. And six third-party skills ride along, pinned and licensed: Supabase's Postgres and platform guides, Vercel's React best practices, Stripe's integration guide, and two working-discipline skills from Superpowers (verify before claiming done, and debug systematically instead of guessing).
+
 ## What's in the box
 
 ```
@@ -44,16 +46,19 @@ config/                          the installable payload (copied to the root of 
   .claude/hooks/sql-guard.js     PreToolUse hook that blocks dangerous SQL
   .claude/hooks/bash-guard.js    PreToolUse hook that blocks destructive shell commands
   .claude/hooks/session-check.js SessionStart hook: reports the version, warns if the config is not active
-  .claude/commands/plan.md       /plan    durable implementation plan with acceptance criteria
-  .claude/commands/review.md     /review  independent review pass before a task is called done
-  .claude/commands/lesson.md     /lesson  turn a correction into a test, rule or hook
-  .claude/commands/audit.md      /audit   the AI process audit
+  .claude/skills/plan/           /plan    durable implementation plan with acceptance criteria
+  .claude/skills/review/         /review  independent review pass before a task is called done
+  .claude/skills/lesson/         /lesson  turn a correction into a test, rule or hook
+  .claude/skills/audit/          /audit   the AI process audit
+  .claude/skills/beyond-traps/   the platform traps that have cost Beyond projects a day, with fixes
+  .claude/skills/<vendored>/     six third-party skills, pinned and licensed (see THIRD-PARTY-NOTICES.md)
   docs/plans/, docs/ai-process-audit/   plan folder, eval log and lessons log (created once, never overwritten)
 .claude/, CLAUDE.md              this repo's own installed copy of the payload (it runs what it ships)
 install.sh                       one-line installer (curl | bash), safe to re-run
 VERSION                          date-based version, stamped into .claude/autopilot.json on install
 scripts/verify.sh                the checks CI runs on every pull request
 scripts/sync-root.sh             refresh this repo's installed copy from config/
+scripts/vendor-skills.sh         refresh the vendored third-party skills at their pinned commits
 tests/                           guard test suites
 docs/
   INSTALL.md                     every install path: cloud session, local repo, whole machine
@@ -62,6 +67,8 @@ docs/
   OWNER-INTAKE.md                questionnaire to fill in before an audit
   TROUBLESHOOTING.md             when something still prompts, blocks, or fails
   decisions.md                   why things are the way they are
+  PROJECT-SECTION.md             how to write the Project section of a repo's CLAUDE.md
+THIRD-PARTY-NOTICES.md           the vendored skills, their sources and licences
 CONTRIBUTING.md                  how to add to this repo
 SECURITY.md                      how to report a way past the controls
 CHANGELOG.md                     what changed and which project or audit it came from
@@ -88,7 +95,7 @@ The installer keeps any existing `CLAUDE.md` content (it lands under the Project
 Start a fresh session on the repo. The first thing you see is the session check: the payload version, and a warning if the Project section is unfilled or a guard is missing. Then:
 
 1. Ask it to run `rm -rf build`. It should come back **blocked by the guard**, not ask you to allow it. Same for `delete from public.some_table` with no WHERE against your database tool.
-2. Type `/` and you should see `plan`, `review`, `lesson` and `audit` in the command list.
+2. Type `/` and you should see `plan`, `review`, `lesson`, `audit` and `beyond-traps` in the list, along with the vendored skills.
 3. Ask it to make a small edit and commit. It should do both without asking.
 
 ## Day to day
@@ -127,10 +134,14 @@ Exit code 2 with a BLOCKED message means it is working.
 - Node.js on the machine that runs the session (Claude Code already needs it; the SQL guard uses it)
 - curl and tar for the installer
 
+## About Beyond
+
+Beyond Autopilot is built and maintained by [Beyond](https://gobeyond.co.nz), a New Zealand studio that designs and builds web apps, client portals and internal tools for New Zealand businesses, with AI-assisted engineering under exactly these controls. Every lesson in this repo came from a real Beyond project. If you would like this way of working on something of yours, start at [gobeyond.co.nz](https://gobeyond.co.nz).
+
 ---
 
 <div align="center">
 
-Beyond™ Autopilot is built and maintained by Beyond, Aotearoa New Zealand.
+Beyond™ Autopilot is built and maintained by [Beyond](https://gobeyond.co.nz), Aotearoa New Zealand.
 
 </div>

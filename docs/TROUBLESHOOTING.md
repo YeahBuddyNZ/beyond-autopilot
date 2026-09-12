@@ -65,7 +65,7 @@ If it blocked something that is genuinely routine, that is a false positive: ope
 
 ## `/audit` is not recognised
 
-The command file must be at `.claude/commands/audit.md` on the branch the session cloned. Re-run the installer, commit, merge, and start a fresh session.
+The skill must be at `.claude/skills/audit/SKILL.md` on the branch the session cloned. Re-run the installer, commit, merge, and start a fresh session. A new `.claude/skills/` directory needs a fresh session to be picked up; editing an existing skill does not.
 
 ## The installer failed
 

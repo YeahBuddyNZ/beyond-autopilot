@@ -83,8 +83,15 @@ if [ -f "$TARGET/CLAUDE.md" ]; then
   fi
 fi
 
-mkdir -p "$TARGET/.claude/hooks" "$TARGET/.claude/commands"
+mkdir -p "$TARGET/.claude/hooks" "$TARGET/.claude/skills"
 cp -R "$TMP/payload/.claude/." "$TARGET/.claude/"
+
+# Upgrade path: earlier payloads shipped these as .claude/commands/*.md. The same names now
+# live under .claude/skills/, so the old files would register each slash command twice.
+for c in plan review lesson audit; do
+  [ -f "$TARGET/.claude/commands/$c.md" ] && rm -f "$TARGET/.claude/commands/$c.md" && say "  removed superseded .claude/commands/$c.md"
+done
+rmdir "$TARGET/.claude/commands" 2>/dev/null || true
 cp "$TMP/payload/CLAUDE.md" "$TARGET/CLAUDE.md"
 
 # Everything else in the payload (docs templates: plans, eval log, lessons) is created only

@@ -2,6 +2,18 @@
 
 Short records of choices that shape this repo, so the next session does not re-argue them. Newest first. One paragraph each; if a decision needs more, it needs an ADR in a downstream repo, not here.
 
+## 2026-09-12: Third-party skills are vendored, pinned and licensed
+
+Six skills from Supabase, Vercel, Stripe and Superpowers ship inside the payload as copies at a pinned commit, each with its licence file (or the licence declared in its frontmatter where upstream has no file) and an `UPSTREAM.md`. Not fetched at install time: that would make every install depend on four upstream repos being reachable and unchanged. `scripts/vendor-skills.sh` refreshes them; the table in it is the record. The session's GitHub proxy serves public repos through plain git only, not archives or the API, which is why the script clones.
+
+## 2026-09-12: One rule for the git author
+
+Across the repos, one said the author must be the personal address and three said GitHub rejects it (GH007) and Vercel then refuses to deploy. The base rule is: the author stays as configured; if a push or deploy is refused for the author, the fix is the account's GitHub noreply address, set by a human. Sessions never change the author to force a push.
+
+## 2026-09-12: Commands became skills
+
+Claude Code merged commands into skills; both create the same slash command, skills add supporting files. The four commands moved to `.claude/skills/<name>/SKILL.md` and the audit's appendices moved beside it. Descriptions were rewritten as triggers because the docs say Claude under-triggers on terse descriptions.
+
 ## 2026-09-12: The repo installs its own payload
 
 `.claude/` at the root and the rules section of `CLAUDE.md` are the installed copy of `config/`, refreshed by `scripts/sync-root.sh`, and `verify.sh` fails if they drift. The audit found that shipping `/plan`, `/review` and `/lesson` while not having them here produced exactly the failures they prevent. Cost: the payload's deny on editing `.claude/**` and `.github/**` applies to sessions on this repo, and the guards apply to the session that edits the guards. Accepted; it caught a false positive within minutes.

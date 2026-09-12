@@ -10,8 +10,10 @@ This repo is the single source for the config and the audit. Every project that 
 | Make a command silent, one-tap, or blocked | `config/.claude/settings.json` |
 | Add a platform's MCP tools | `config/.claude/settings.json` (both `mcp__claude_ai_<Server>__*` and `mcp__<server>__*` spellings) |
 | Enforce something rather than instruct it | A new hook under `config/.claude/hooks/`, wired in `settings.json` |
-| Add a repeatable procedure | A new command under `config/.claude/commands/` |
-| Change how the audit works | `config/.claude/commands/audit.md` |
+| Add a repeatable procedure | A new skill under `config/.claude/skills/<name>/SKILL.md`; detail goes in `references/` beside it |
+| Record a platform trap that will bite the next project | `config/.claude/skills/beyond-traps/SKILL.md`, with the symptom, the fix and the repo it came from |
+| Change how the audit works | `config/.claude/skills/audit/SKILL.md` or its `references/appendices.md` |
+| Add or upgrade a third-party skill | The table in `scripts/vendor-skills.sh`, then run it; never edit a vendored directory by hand |
 | Change how install works | `install.sh` and `docs/INSTALL.md` |
 | Add a "Blocked" promise to the README | A rule in `bash-guard.js` or `sql-guard.js` with a test, then the deny list, then `SECURITY.md` |
 
@@ -38,7 +40,9 @@ Every change under `config/` or to `install.sh` gets a line in `CHANGELOG.md` un
 ## Style
 
 - New Zealand English. No em dashes anywhere, including code comments and commit messages.
-- Instructions in `config/CLAUDE.md` are short and imperative. If a rule needs a paragraph, it probably wants to be a hook or a check instead.
+- Instructions in `config/CLAUDE.md` are short and imperative. If a rule needs a paragraph, it probably wants to be a hook or a check instead. A rule earns a line in the base only when it recurs across projects or traces to a defect that shipped; otherwise it is a trap (in `beyond-traps`) or a Project-section line.
+- Skill descriptions are the trigger: say what the skill does, then the situations and phrasings it should fire on, then what it is not for. Keep `SKILL.md` under 500 lines and the description under 1,536 characters; `verify.sh` checks both.
+- Vendored skills are pinned to a commit and carry their licence. To upgrade one, change the commit in `scripts/vendor-skills.sh`, re-run it, read the diff, and note it in the changelog and `THIRD-PARTY-NOTICES.md`.
 - Prefer enforcement over instruction. A permission or a hook the AI cannot skip beats a sentence it might forget.
 
 ## Releasing
