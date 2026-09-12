@@ -33,7 +33,7 @@ On top of that sit four skills that give every project the same working discipli
 | `/lesson` | Turns a correction into a control that cannot be skipped: a test, a rule, a hook or a doc, in the right place, verified |
 | `/audit` | A Principal Engineer grade review of how the AI is actually being used on a repo, producing a ranked list of the smallest changes that would make it materially better |
 
-Findings from `/audit` that apply everywhere come back here, so the base gets better with every project.
+Findings from `/audit` that apply everywhere come back here, so the base gets better with every project. What kinds of skill belong in this payload at all, and why, is set out in [docs/SKILLS.md](docs/SKILLS.md).
 
 Then there is the memory. The `beyond-traps` skill holds every platform trap that has cost a Beyond project a day, with the symptom and the fix, drawn from the instruction files and commit history of 23 repositories. The rules that recurred across those repos are in the base `CLAUDE.md`. And six third-party skills ride along, pinned and licensed: Supabase's Postgres and platform guides, Vercel's React best practices, Stripe's integration guide, and two working-discipline skills from Superpowers (verify before claiming done, and debug systematically instead of guessing).
 
@@ -68,6 +68,7 @@ docs/
   TROUBLESHOOTING.md             when something still prompts, blocks, or fails
   decisions.md                   why things are the way they are
   PROJECT-SECTION.md             how to write the Project section of a repo's CLAUDE.md
+  SKILLS.md                      what kinds of skill belong in the payload, which do not, and the bar for adding one
 THIRD-PARTY-NOTICES.md           the vendored skills, their sources and licences
 CONTRIBUTING.md                  how to add to this repo
 SECURITY.md                      how to report a way past the controls

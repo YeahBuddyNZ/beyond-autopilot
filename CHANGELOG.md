@@ -4,6 +4,10 @@ Newest first. Each entry says what changed and where it came from, so the next a
 
 ## 2026.09.12
 
+Source: owner request for a statement of what kinds of skill belong in the payload.
+
+- `docs/SKILLS.md`: the five kinds of thing mistaken for a skill and where each belongs, the four kinds this payload carries and why, the kinds deliberately left out, the bar for adding one, and where each kind lives. Docs only; no payload change.
+
 Source: finalising the release.
 
 - The installer's archive URL now works for a branch, a tag or a commit, so `AUTOPILOT_REF=v2026.09.12` pins a project to a release as the docs already claimed. Found while tagging the first release.
