@@ -4,6 +4,15 @@ Newest first. Each entry says what changed and where it came from, so the next a
 
 ## 2026.09.12
 
+Source: the instruction files, notes and commit history of 23 Beyond repositories (two read-only surveys), and a survey of the Claude Code skills docs and four skills collections.
+
+- Base rules (`config/CLAUDE.md`, now 61 lines): never invent a fact; never close a business, legal, clinical or financial question; RLS written with the table and verified from a second tenant; connector-applied migrations must be committed; service role key never in a client bundle; build-time env vars need a rebuild and must fail closed; confirm the effect of a deploy, not the gesture; git author stays as configured; green tests are necessary not sufficient; make a new test fail before trusting it; never weaken a check to get green; a route with no entrance is not finished; sweep the codebase when writing a rule; money is integer cents with GST at the total; commit messages say what was verified; decisions are superseded, not worked around. Each recurred in three or more repos or traces to a defect that shipped.
+- `beyond-traps` skill: the platform traps from those repos with symptom, fix and source, organised by Supabase, Vercel, Render, Astro, Next.js, CI, cloud sessions, and NZ money and claims.
+- Commands moved to skills (`.claude/skills/<name>/SKILL.md`), the current Claude Code mechanism. Descriptions rewritten as triggers with positive and negative cases. `/plan`, `/lesson` and `/audit` are user-invoked only. `/review` gained blast radius, revert-the-fix test checks, reachability and an adversarial pass. `/lesson` gained a sweep step and a promotion rule (a lesson becomes a rule only with a passing check, a named failure and a ruled-out alternative). The audit's appendices moved to `references/appendices.md` to keep the skill under 500 lines.
+- Six third-party skills vendored at pinned commits with licences, via `scripts/vendor-skills.sh`: `supabase`, `supabase-postgres-best-practices`, `vercel-react-best-practices`, `stripe-best-practices`, `verification-before-completion`, `systematic-debugging`. Listed in `THIRD-PARTY-NOTICES.md`.
+- `docs/PROJECT-SECTION.md`: what a good Project section holds, from the 23 repos.
+- `verify.sh` now checks every skill's frontmatter, description length and body length, and that vendored skills carry a pinned commit and a licence. The em dash scan excludes vendored text.
+
 Source: the self-audit (`docs/ai-process-audit/AI-PROCESS-AUDIT.md`), recommendations R1 to R5 and the stop-doing list.
 
 - The repo installs its own payload (R1). Root `.claude/` and the rules in `CLAUDE.md` are the installed copy; `scripts/sync-root.sh` refreshes them and `verify.sh` fails on drift.

@@ -48,7 +48,9 @@ Deploying, merging, pushing, creating or deleting cloud resources, and changing 
 - Matches the existing style of the repo and will not add a dependency without saying why.
 - On a task that spans sessions, leaves a `NOTES.md` at the repo root with where it got to and what is next.
 
-## The four commands
+## The skills
+
+Skills are the slash commands. Four are Beyond's working discipline, one is Beyond's memory, six are vendored from the platforms themselves.
 
 **`/plan <task>`** before anything bigger than a small change. It restates the task, inspects the affected code, writes numbered acceptance criteria, ordered steps with a verification command each, risks and out-of-scope, and saves it under `docs/plans/`. Commits reference the plan. If the task is small enough that the plan would be longer than the change, it says so and skips ahead.
 
@@ -58,7 +60,11 @@ Deploying, merging, pushing, creating or deleting cloud resources, and changing 
 
 **`/audit`** every 60 to 90 days. See `AUDIT.md`.
 
-The working rules in `CLAUDE.md` tell it to use the first three without being asked. You can still type them yourself.
+**`beyond-traps`** is read, not run. It holds the platform traps from Beyond's projects: the Supabase pooler and role gotchas, build-time env vars, migrations applied through a connector that never got committed, CSRF behind Render's proxy, git author emails that Vercel silently refuses, and the rest. The base rules tell the AI to read it before touching a connection string, auth, env vars, a migration or a deploy on a platform new to the repo.
+
+**Vendored skills** load themselves when the task matches their description: `supabase` and `supabase-postgres-best-practices` (RLS, migrations, auth, performance), `vercel-react-best-practices` (waterfalls, bundle size, server actions), `stripe-best-practices` (Checkout versus PaymentIntents, webhooks, GST), `verification-before-completion` (no "done" without a green run you actually read), `systematic-debugging` (root cause before the third attempt). Their sources and licences are in `THIRD-PARTY-NOTICES.md`.
+
+The working rules in `CLAUDE.md` tell it to use `/plan`, `/review` and `/lesson` without being asked. You can still type them yourself. `/plan`, `/lesson` and `/audit` write files, so only you can invoke them; the model cannot trigger them on its own.
 
 ## Getting good results
 

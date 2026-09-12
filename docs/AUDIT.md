@@ -4,7 +4,7 @@
 
 > How effective is the AI engineering system around this codebase, where does it fail, and what is the smallest set of changes that would make the AI materially better at designing, implementing, testing and maintaining it?
 
-It ships with the config as `.claude/commands/audit.md`, so any repo with Beyond Autopilot installed can run it.
+It ships with the config as `.claude/skills/audit/SKILL.md` (with the scoring anchors, root cause taxonomy, templates and anti-pattern catalogue in `references/appendices.md` beside it), so any repo with Beyond Autopilot installed can run it.
 
 ## What you get
 
@@ -38,7 +38,7 @@ Every finding cites evidence. Every recommendation traces to a finding. Every to
 
 Full mode on a real repo is a long run. Let it finish; it checkpoints each phase to disk.
 
-If the repo does not have the config installed, paste the contents of `config/.claude/commands/audit.md` into a fresh session with the repo open instead.
+If the repo does not have the config installed, paste the contents of `config/.claude/skills/audit/SKILL.md` and its `references/appendices.md` into a fresh session with the repo open instead.
 
 ## Acting on it (the part that matters)
 
@@ -61,7 +61,8 @@ The reason the audit lives here is that each run improves the base config. After
 |---|---|
 | A rule every project needs | `config/CLAUDE.md` |
 | A check that should be enforced, not remembered | `config/.claude/settings.json` (permission) or a new hook under `config/.claude/hooks/` |
-| A procedure that should be repeatable | A new command under `config/.claude/commands/` |
-| The audit itself missed something | `config/.claude/commands/audit.md` |
+| A procedure that should be repeatable | A new skill under `config/.claude/skills/<name>/SKILL.md` |
+| A platform trap that will bite the next project too | `config/.claude/skills/beyond-traps/SKILL.md` |
+| The audit itself missed something | `config/.claude/skills/audit/SKILL.md` |
 
 Record each change in `CHANGELOG.md` with the repo and audit date it came from. See `CONTRIBUTING.md`.
