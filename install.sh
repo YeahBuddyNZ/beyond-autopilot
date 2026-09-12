@@ -11,8 +11,9 @@
 #
 # Environment:
 #   AUTOPILOT_REPO   GitHub owner/repo to pull from (default YeahBuddyNZ/beyond-autopilot)
-#   AUTOPILOT_REF    branch or tag to install (default main)
+#   AUTOPILOT_REF    branch, tag or commit to install (default main)
 #   AUTOPILOT_ARCHIVE  path to a local .tar.gz of this repo to install from instead of downloading
+#   AUTOPILOT_SOURCE   label written into .claude/autopilot.json (default: repo@ref, or "local archive")
 
 set -euo pipefail
 
@@ -39,9 +40,10 @@ if [ -n "${AUTOPILOT_ARCHIVE:-}" ]; then
   cp "$AUTOPILOT_ARCHIVE" "$TMP/src.tar.gz"
 else
   say "Beyond Autopilot: installing from $REPO@$REF into $TARGET"
-  # Pull the archive. The wildcard pattern means this keeps working if the repo is renamed.
-  curl -fsSL "https://github.com/$REPO/archive/refs/heads/$REF.tar.gz" -o "$TMP/src.tar.gz" \
-    || die "could not download https://github.com/$REPO/archive/refs/heads/$REF.tar.gz"
+  # Pull the archive. GitHub serves archive/<ref>.tar.gz for a branch, a tag or a commit.
+  # The wildcard pattern used at extraction means this keeps working if the repo is renamed.
+  curl -fsSL "https://github.com/$REPO/archive/$REF.tar.gz" -o "$TMP/src.tar.gz" \
+    || die "could not download https://github.com/$REPO/archive/$REF.tar.gz (is $REF a branch, tag or commit?)"
 fi
 mkdir -p "$TMP/payload"
 tar -xzf "$TMP/src.tar.gz" -C "$TMP/payload" --strip-components=2 --wildcards '*/config/*' \
@@ -106,8 +108,12 @@ cp "$TMP/payload/CLAUDE.md" "$TARGET/CLAUDE.md"
 done
 
 # Version stamp, read by the session-start check.
+SOURCE="${AUTOPILOT_SOURCE:-}"
+if [ -z "$SOURCE" ]; then
+  if [ -n "${AUTOPILOT_ARCHIVE:-}" ]; then SOURCE="local archive"; else SOURCE="$REPO@$REF"; fi
+fi
 printf '{\n  "version": "%s",\n  "source": "%s",\n  "installed_at": "%s"\n}\n' \
-  "$VERSION" "${AUTOPILOT_ARCHIVE:+local archive}${AUTOPILOT_ARCHIVE:-$REPO@$REF}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  "$VERSION" "$SOURCE" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   > "$TARGET/.claude/autopilot.json"
 
 # Verify what we just installed.

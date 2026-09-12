@@ -4,6 +4,12 @@ Newest first. Each entry says what changed and where it came from, so the next a
 
 ## 2026.09.12
 
+Source: finalising the release.
+
+- The installer's archive URL now works for a branch, a tag or a commit, so `AUTOPILOT_REF=v2026.09.12` pins a project to a release as the docs already claimed. Found while tagging the first release.
+- The install stamp's source label no longer glues "local archive" onto a temp path; `scripts/sync-root.sh` labels this repo's own stamp as coming from `config/`. Covered by `verify.sh`.
+- First release tag: `v2026.09.12`.
+
 Source: the instruction files, notes and commit history of 23 Beyond repositories (two read-only surveys), and a survey of the Claude Code skills docs and four skills collections.
 
 - Base rules (`config/CLAUDE.md`, now 61 lines): never invent a fact; never close a business, legal, clinical or financial question; RLS written with the table and verified from a second tenant; connector-applied migrations must be committed; service role key never in a client bundle; build-time env vars need a rebuild and must fail closed; confirm the effect of a deploy, not the gesture; git author stays as configured; green tests are necessary not sufficient; make a new test fail before trusting it; never weaken a check to get green; a route with no entrance is not finished; sweep the codebase when writing a rule; money is integer cents with GST at the total; commit messages say what was verified; decisions are superseded, not worked around. Each recurred in three or more repos or traces to a defect that shipped.

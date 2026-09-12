@@ -89,8 +89,9 @@ Three environment variables change where it pulls from:
 
 ```
 AUTOPILOT_REPO=owner/repo        # default YeahBuddyNZ/beyond-autopilot
-AUTOPILOT_REF=branch             # default main
+AUTOPILOT_REF=ref                # branch, tag or commit; default main. Pin a project with a release tag, e.g. v2026.09.12
 AUTOPILOT_ARCHIVE=/path/to.tar.gz  # install from a local archive instead of downloading
+AUTOPILOT_SOURCE=label             # what .claude/autopilot.json records as the source (optional)
 ```
 
 ## Without the installer

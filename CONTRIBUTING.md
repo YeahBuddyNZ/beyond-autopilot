@@ -47,4 +47,4 @@ Every change under `config/` or to `install.sh` gets a line in `CHANGELOG.md` un
 
 ## Releasing
 
-`main` is what installs. Open a pull request, run the checks above, merge. There is no version number; the changelog date is the version. To pin a repo to a point in time, install with `AUTOPILOT_REF=<tag or branch>`.
+`main` is what installs. Open a pull request, run the checks above, merge. `VERSION` holds the changelog date. Each merge to `main` that changes the payload is tagged `v<VERSION>` (for example `v2026.09.12`) so a project can pin: `AUTOPILOT_REF=v2026.09.12`. A tag is a snapshot, not a branch; `main` is what an unpinned install gets.
