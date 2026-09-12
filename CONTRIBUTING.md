@@ -10,7 +10,7 @@ This repo is the single source for the config and the audit. Every project that 
 | Make a command silent, one-tap, or blocked | `config/.claude/settings.json` |
 | Add a platform's MCP tools | `config/.claude/settings.json` (both `mcp__claude_ai_<Server>__*` and `mcp__<server>__*` spellings) |
 | Enforce something rather than instruct it | A new hook under `config/.claude/hooks/`, wired in `settings.json` |
-| Add a repeatable procedure | A new skill under `config/.claude/skills/<name>/SKILL.md`; detail goes in `references/` beside it |
+| Add a repeatable procedure | A new skill under `config/.claude/skills/<name>/SKILL.md`; detail goes in `references/` beside it. Read `docs/SKILLS.md` first: it says which kinds belong and the bar for adding one |
 | Record a platform trap that will bite the next project | `config/.claude/skills/beyond-traps/SKILL.md`, with the symptom, the fix and the repo it came from |
 | Change how the audit works | `config/.claude/skills/audit/SKILL.md` or its `references/appendices.md` |
 | Add or upgrade a third-party skill | The table in `scripts/vendor-skills.sh`, then run it; never edit a vendored directory by hand |
