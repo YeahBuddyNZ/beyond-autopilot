@@ -100,10 +100,17 @@ ours_desc() {
     audit)  printf '%s' 'description: Audit the AI engineering process around this repo (not the product).' ;;
   esac
 }
+is_ours() {
+  # the command file this payload shipped, or (audit only) the original audit prompt that
+  # predates the payload and was installed by hand as .claude/commands/audit.md
+  grep -qF "$(ours_desc "$1")" "$2" && return 0
+  [ "$1" = "audit" ] && grep -q '^# AI Engineering Process Audit' "$2" && grep -q '^## 0. Mission' "$2" && return 0
+  return 1
+}
 for c in plan review lesson audit; do
   f="$TARGET/.claude/commands/$c.md"
   [ -f "$f" ] || continue
-  if grep -qF "$(ours_desc "$c")" "$f"; then
+  if is_ours "$c" "$f"; then
     rm -f "$f" && say "  removed superseded .claude/commands/$c.md (replaced by .claude/skills/$c/)"
   else
     say "  kept .claude/commands/$c.md: it is not the one this payload shipped. Note that /$c now resolves to two files; rename or remove one."

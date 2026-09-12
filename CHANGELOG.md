@@ -6,7 +6,7 @@ Newest first. Each entry says what changed and where it came from, so the next a
 
 Source: the first real install, on SEP-Quoting, which already had its own `.claude/commands/audit.md` and `review.md` from an earlier audit.
 
-- The installer's upgrade step now removes an old command file only when its description matches the one this payload shipped. A project's own command with the same name is kept and reported, since `/review` would then resolve to two files. Verify fixture covers both cases.
+- The installer's upgrade step now removes an old command file only when it is recognisably ours: the command this payload shipped, or the original audit prompt installed by hand before the payload existed. A project's own command with the same name is kept and reported, since `/review` would then resolve to two files. Verify fixture covers all three cases.
 
 Source: owner request for a statement of what kinds of skill belong in the payload.
 
