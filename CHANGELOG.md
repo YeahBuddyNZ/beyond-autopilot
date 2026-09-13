@@ -2,6 +2,10 @@
 
 Newest first. Each entry says what changed and where it came from, so the next audit can see what was tried. The date of the newest payload entry is the value in `VERSION`.
 
+## 2026-09-13 (re-audit, docs only)
+
+- Re-audited the repo against the 2026-09-11 baseline now that all five recommendations shipped. Overall 5.1 to 6.7. Delta section added to `docs/ai-process-audit/AI-PROCESS-AUDIT.md`, scores in `docs/ai-process-audit/audit-scorecard-2026-09-13.yaml`. The remaining gap is evaluation: the eval log and golden tasks ship but have no data yet, so running the golden suite for a baseline is the next step. Not a payload change; `VERSION` unchanged.
+
 ## 2026.09.13
 
 Source: the first real install of the payload, on SEP-Quoting from another session, watched and learned from.
