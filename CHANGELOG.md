@@ -2,6 +2,16 @@
 
 Newest first. Each entry says what changed and where it came from, so the next audit can see what was tried. The date of the newest payload entry is the value in `VERSION`.
 
+## 2026.09.13
+
+Source: the first real install of the payload, on SEP-Quoting from another session, watched and learned from.
+
+- Installer falls back to `git clone` when the GitHub archive download fails. The first real install could not use the documented `curl | bash` one-liner because that session's proxy returned 403 on the archive host, while git clone of the same public repo worked. The fallback was proven against the live proxy. `git` becomes an optional dependency, used only for the fallback.
+- `beyond-traps` gains the archive-403 trap: the archive and raw hosts can be blocked in a cloud session while git clone is not, so prefer cloning.
+- Cloud install docs (`README.md`, `docs/INSTALL.md`) lead with, or fall back to, the clone-based path.
+- Two rows in `docs/ai-process-audit/lessons.md` from the install: the archive-403 lesson above, and confirmation that the keep-a-project's-own-command fix (PR #8) was the right control after the install (predating it) deleted a custom `review.md` whose substance the driving session preserved by hand.
+- `VERSION` is 2026.09.13.
+
 ## 2026.09.12
 
 Source: the first real install, on SEP-Quoting, which already had its own `.claude/commands/audit.md` and `review.md` from an earlier audit.

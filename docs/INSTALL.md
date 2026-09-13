@@ -21,6 +21,13 @@ Install Beyond Autopilot into this repo:
 
 1. Run:
    curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
+
+   If that curl returns a 403 or nothing (some cloud-session proxies block the GitHub file and archive hosts but still serve git clone), clone the repo and run the installer from it instead:
+
+   git clone --depth 1 https://github.com/YeahBuddyNZ/beyond-autopilot /tmp/beyond-autopilot
+   bash /tmp/beyond-autopilot/install.sh .
+
+   The installer itself also falls back to a git clone if its own archive download is blocked, so the one-liner self-heals once it is running.
 2. Fill in the "## Project" section at the bottom of CLAUDE.md with what you can see: name, stack, how to run and test, migration tool.
 3. Commit as "Add Beyond Autopilot config" and push to the current branch.
 4. Tell me when it's pushed and which branch.
