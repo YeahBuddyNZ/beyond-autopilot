@@ -73,6 +73,7 @@ Every entry here broke a real Beyond project at least once. Format: the trap, wh
 - **Each repo gets its own cloud environment; the default environment stays empty.** A service role key once leaked into an unrelated project's environment. (muster)
 - **Egress is filtered.** Report a secret as set or missing, never its value. Some hosts are unreachable; say so rather than claiming a check ran. (muster, nzcreditsolutions, Beyond-Ajax-Configurator, momentum)
 - **The GitHub proxy refuses repository-settings writes** (rename, description, topics, branch protection) and serves only attached or public repos. Ask the owner for settings changes. (beyond-autopilot)
+- **The GitHub archive host can 403 through a cloud proxy while git clone of the same public repo works.** `github.com/<owner>/<repo>/archive/<ref>.tar.gz` and `raw.githubusercontent.com` are blocked in some cloud sessions but not others, so a `curl | bash` installer that pulls a tarball fails unpredictably. Clone the public repo instead (the git proxy serves it), or use an installer that falls back to a clone. Beyond Autopilot's installer now does that fallback automatically. (beyond-autopilot, first real install on SEP-Quoting)
 - **Verification scripts default to local; production has to be asked for by name.** (BeyondFacelessApp)
 - **Check a handover document's date against `git log` before trusting a claim in it.** (nzcreditsolutions)
 

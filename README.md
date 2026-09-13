@@ -87,6 +87,8 @@ CHANGELOG.md                     what changed and which project or audit it came
 curl -sL https://raw.githubusercontent.com/YeahBuddyNZ/beyond-autopilot/main/install.sh | bash
 ```
 
+If a cloud-session proxy blocks that download (a 403 on the GitHub file or archive host), clone the repo and run `install.sh` from it instead; the installer also falls back to a clone on its own. See [docs/INSTALL.md](docs/INSTALL.md).
+
 Then merge to your default branch and start a fresh session. Cloud sessions load the config when they clone; local sessions load it on next launch.
 
 The installer keeps any existing `CLAUDE.md` content (it lands under the Project section for you to tidy), keeps your Project section and logs on re-runs, backs up a `settings.json` it replaces, and verifies both guards are working before it reports success. Full detail, plus a no-script fallback, in [docs/INSTALL.md](docs/INSTALL.md).

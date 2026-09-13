@@ -14,6 +14,9 @@
 #   AUTOPILOT_REF    branch, tag or commit to install (default main)
 #   AUTOPILOT_ARCHIVE  path to a local .tar.gz of this repo to install from instead of downloading
 #   AUTOPILOT_SOURCE   label written into .claude/autopilot.json (default: repo@ref, or "local archive")
+#
+# curl, tar and node are required. git is optional: it is used only to fall back to a clone
+# when the GitHub archive host is blocked (some cloud-session proxies 403 it).
 
 set -euo pipefail
 
@@ -34,22 +37,42 @@ TARGET="$(cd "$TARGET" && pwd)"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+PAYLOAD_READY=""
 if [ -n "${AUTOPILOT_ARCHIVE:-}" ]; then
   [ -f "$AUTOPILOT_ARCHIVE" ] || die "AUTOPILOT_ARCHIVE does not exist: $AUTOPILOT_ARCHIVE"
   say "Beyond Autopilot: installing from $AUTOPILOT_ARCHIVE into $TARGET"
   cp "$AUTOPILOT_ARCHIVE" "$TMP/src.tar.gz"
 else
   say "Beyond Autopilot: installing from $REPO@$REF into $TARGET"
-  # Pull the archive. GitHub serves archive/<ref>.tar.gz for a branch, a tag or a commit.
-  # The wildcard pattern used at extraction means this keeps working if the repo is renamed.
-  curl -fsSL "https://github.com/$REPO/archive/$REF.tar.gz" -o "$TMP/src.tar.gz" \
-    || die "could not download https://github.com/$REPO/archive/$REF.tar.gz (is $REF a branch, tag or commit?)"
+  # GitHub serves archive/<ref>.tar.gz for a branch, a tag or a commit. Some Claude Code
+  # cloud-session proxies return 403 for that host, so if the download fails, fall back to a
+  # git clone, which the same proxies serve for public repos. This is the case the first real
+  # install hit; see docs/ai-process-audit/lessons.md. The wildcard extraction below survives
+  # a repo rename either way.
+  if ! curl -fsSL "https://github.com/$REPO/archive/$REF.tar.gz" -o "$TMP/src.tar.gz" 2>/dev/null; then
+    command -v git >/dev/null 2>&1 \
+      || die "could not download the archive and git is not available to fall back to a clone. In a cloud session, clone the repo and run install.sh from it."
+    say "  archive download failed (a cloud proxy may block that host); falling back to a git clone"
+    GIT_LFS_SKIP_SMUDGE=1 git clone -q --depth 1 "https://github.com/$REPO" "$TMP/clone" \
+      || die "could not download the archive or clone https://github.com/$REPO"
+    if [ "$REF" != "main" ]; then
+      git -C "$TMP/clone" fetch -q --depth 1 origin "$REF" && git -C "$TMP/clone" checkout -q FETCH_HEAD \
+        || die "cloned $REPO but could not check out $REF"
+    fi
+    [ -d "$TMP/clone/config" ] || die "clone of $REPO has no config/ directory"
+    mkdir -p "$TMP/payload"
+    cp -R "$TMP/clone/config/." "$TMP/payload/"
+    VERSION="$(head -1 "$TMP/clone/VERSION" 2>/dev/null || true)"
+    PAYLOAD_READY=1
+  fi
 fi
-mkdir -p "$TMP/payload"
-tar -xzf "$TMP/src.tar.gz" -C "$TMP/payload" --strip-components=2 --wildcards '*/config/*' \
-  || die "archive did not contain a config/ directory"
-VERSION="$(tar -xzOf "$TMP/src.tar.gz" --wildcards '*/VERSION' 2>/dev/null | head -1 || true)"
-[ -n "$VERSION" ] || VERSION="unknown"
+if [ -z "$PAYLOAD_READY" ]; then
+  mkdir -p "$TMP/payload"
+  tar -xzf "$TMP/src.tar.gz" -C "$TMP/payload" --strip-components=2 --wildcards '*/config/*' \
+    || die "archive did not contain a config/ directory"
+  VERSION="$(tar -xzOf "$TMP/src.tar.gz" --wildcards '*/VERSION' 2>/dev/null | head -1 || true)"
+fi
+[ -n "${VERSION:-}" ] || VERSION="unknown"
 
 [ -f "$TMP/payload/.claude/settings.json" ] || die "payload is missing .claude/settings.json"
 [ -f "$TMP/payload/CLAUDE.md" ] || die "payload is missing CLAUDE.md"

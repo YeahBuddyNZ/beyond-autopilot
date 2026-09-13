@@ -21,6 +21,10 @@ node --test tests/*.test.js && ok || bad "tests/ failed"
 step "install.sh syntax"
 bash -n install.sh && ok || bad "install.sh has a syntax error"
 
+step "install.sh keeps the git-clone fallback for a blocked archive host"
+grep -q 'falling back to a git clone' install.sh && grep -q 'git clone -q --depth 1' install.sh \
+  && ok || bad "install.sh lost its clone fallback; a cloud proxy that 403s the archive host would break the one-liner (see docs/ai-process-audit/lessons.md 2026-09-13)"
+
 step "every skill has frontmatter, a description under 1,536 characters, and a body under 500 lines"
 for f in config/.claude/skills/*/SKILL.md; do
   head -1 "$f" | grep -q '^---$' || bad "$f does not start with frontmatter"
